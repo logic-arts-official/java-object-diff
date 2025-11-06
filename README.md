@@ -2,10 +2,8 @@
 
 `java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
 
-[![Build Status](https://travis-ci.org/SQiShER/java-object-diff.svg?branch=master)](https://travis-ci.org/SQiShER/java-object-diff) 
-[![Coverage Status](https://coveralls.io/repos/SQiShER/java-object-diff/badge.svg?branch=master&service=github)](https://coveralls.io/github/SQiShER/java-object-diff?branch=master)
-[![Download](https://api.bintray.com/packages/sqisher/maven/java-object-diff/images/download.svg)](https://bintray.com/sqisher/maven/java-object-diff/_latestVersion)
-[![Documentation Status](https://readthedocs.org/projects/java-object-diff/badge/?version=latest)](https://readthedocs.org/projects/java-object-diff/?badge=latest)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/de.danielbechler/java-object-diff.svg)](https://search.maven.org/artifact/de.danielbechler/java-object-diff)
 
 ## Features
 
@@ -19,23 +17,22 @@
 * Tiny, straightforward, yet very powerful API
 * Detects and handles circular references in the object graph
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
-* Compatible with Java 1.5 and above
+* Compatible with Java 5 and above (targets Java 5 bytecode)
 
 ## Support this Project
 
 If you like this project, there are a few things you can do to show your support:
 
-* [**Follow me** on Twitter (@SQiShER)](https://twitter.com/SQiShER)
-* [**Surprise me** with something from my Amazon Wishlist](http://www.amazon.de/registry/wishlist/2JFW27V71CBGM)
-* [**Contribute** code, documentation, ideas, or insights into your use-case](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md)
-* Star this repository (stars make me very happy!)
+* [**Contribute**](https://github.com/logic-arts-official/java-object-diff/blob/master/.github/CONTRIBUTING.md) code, documentation, ideas, or insights into your use-case
+* Star this repository
 * Talk about it, write about it, recommend it to others
+* Report issues and help improve the library
 
-But most importantly: **don't ever hesitate to ask me for help**, if you're having trouble getting this library to work. The only way to make it better is by hearing about your use-cases and pushing the limits!
+But most importantly: **don't ever hesitate to ask for help**, if you're having trouble getting this library to work. The only way to make it better is by hearing about your use-cases and pushing the limits!
 
 ## Getting Started
 
-To learn how to use **Java Object Diff** have a look at the [Getting Started Guide](http://java-object-diff.readthedocs.org/en/latest/getting-started/).
+To learn how to use **Java Object Diff** have a look at the [Getting Started Guide](docs/getting-started.md).
 
 ### Using with Maven
 
@@ -43,19 +40,24 @@ To learn how to use **Java Object Diff** have a look at the [Getting Started Gui
 <dependency>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
-    <version>0.95</version>
+    <version>0.96</version>
 </dependency>
 ```
 
 ### Using with Gradle
 
 ```groovy
-compile 'de.danielbechler:java-object-diff:0.95'
+implementation 'de.danielbechler:java-object-diff:0.96'
 ```
 
 ## Documentation
 
-The documentation can be found over at [ReadTheDocs](http://java-object-diff.readthedocs.org/en/latest/).
+The documentation can be found in the [docs](docs/) directory:
+
+* [Getting Started Guide](docs/getting-started.md)
+* [User Guide](docs/user-guide.md)
+* [Using with Maven/Gradle](docs/maven.md)
+* [Merging Objects](docs/merging.md)
 
 ## Caveats
 
@@ -87,8 +89,8 @@ This library has been battle-tested in a rather big project of mine, where I use
 
 ## Contribute
 
-You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
-Request](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
+You discovered a bug or have an idea for a new feature? Great, why don't you send us a [Pull 
+Request](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](.github/CONTRIBUTING.md) is a brief guide with everything you need to know to get involved!
 
 ---
 
