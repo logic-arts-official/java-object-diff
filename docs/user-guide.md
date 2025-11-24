@@ -89,10 +89,9 @@ A `NodePath` can be created by calling one of its numerous static builder method
 
 ### Error Handling
 
-* **Check for null values** before comparing
 * **Handle circular references** - The library detects them but you should understand how they affect your use case
-* **Validate input objects** before comparison
-* **Use try-catch blocks** when working with accessors that might throw exceptions
+* **Validate input objects** when necessary for your business logic
+* **Use try-catch blocks** when working with accessors that might throw exceptions in your specific domain
 
 ### Testing
 

@@ -16,6 +16,7 @@ group = 'de.danielbechler'
 
 description = """Java Object Diff"""
 
+// Target Java 8 bytecode for maximum compatibility while supporting Java 17+ runtime
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
