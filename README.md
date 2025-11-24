@@ -17,7 +17,7 @@
 * Tiny, straightforward, yet very powerful API
 * Detects and handles circular references in the object graph
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
-* Compatible with Java 5 and above (targets Java 5 bytecode)
+* Compatible with Java 8 and above
 
 ## Support this Project
 
@@ -86,6 +86,55 @@ DiffNode root = ObjectDifferBuilder.buildDefault().compare(workingObject, baseOb
 This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is **how to treat** changes and **not how to find** them.
 
 This library has been battle-tested in a rather big project of mine, where I use it to generate **activity streams**, resolve database **update conflics**, display **change logs** and limit the scope of entity updates to only a **subset of properties**, based on the context or user permissions. It didn't let me down so far and I hope it can help you too!
+
+## Pros and Cons
+
+### Advantages ✅
+
+* **Zero Configuration Required** - Works out of the box with most Java objects without any setup
+* **Deep Comparison** - Automatically handles nested objects, collections, and maps recursively
+* **Flexible API** - Extensive configuration options to customize behavior for specific use cases
+* **Non-Invasive** - No need to modify existing classes or implement special interfaces
+* **Circular Reference Handling** - Detects and handles circular references gracefully
+* **Read/Write Access** - Not just for comparison - can also apply diffs as patches
+* **Type-Safe** - Strongly typed API with compile-time safety
+* **Well-Tested** - Comprehensive test suite with high code coverage
+* **Minimal Dependencies** - Only requires SLF4J for logging
+* **Active Community** - Maintained and used in production environments
+
+### Limitations ⚠️
+
+* **JavaBean Convention** - By default requires getter/setter methods (though custom introspectors can be implemented)
+* **Ordered Lists** - Treats Lists as Sets by default; maintaining order requires additional configuration
+* **Performance** - Deep reflection-based comparison can be slower for very large object graphs
+* **Learning Curve** - Advanced features require understanding of the configuration API
+* **Primitive Focus** - Best suited for data objects; may require customization for complex behavioral objects
+
+## Roadmap and Backlog
+
+### Planned Features 🚀
+
+* **Enhanced List Support** - Better handling of ordered collections with positional differences
+* **Performance Improvements** - Caching strategies for repeated comparisons
+* **JSON/XML Serialization** - Built-in serializers for diff results
+* **Diff Annotations** - Annotation-based configuration for marking comparable fields
+* **Async Comparison** - Support for comparing large objects asynchronously
+* **Diff Statistics** - Summary information about change magnitude
+
+### Known Issues 📝
+
+* Ordered list comparisons treat lists as sets (see [Caveats](#caveats))
+* Performance optimization needed for very large object graphs
+* Limited support for comparing objects with dynamic proxies
+
+### How to Contribute
+
+Check our [backlog on GitHub Issues](https://github.com/logic-arts-official/java-object-diff/issues) for:
+* Features marked with `enhancement` label
+* Bugs marked with `good first issue` for newcomers
+* Items marked with `help wanted` where we need community support
+
+See our [Contributing Guide](.github/CONTRIBUTING.md) for detailed instructions on how to get started.
 
 ## Contribute
 
