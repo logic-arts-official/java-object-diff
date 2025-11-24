@@ -78,6 +78,97 @@ A sequence of these actions describes one exact location in the object graph and
 
 A `NodePath` can be created by calling one of its numerous static builder methods.
 
+## Best Practices
+
+### Performance Optimization
+
+* **Reuse ObjectDiffer instances** - They are thread-safe and can be reused
+* **Exclude unnecessary properties** - Use inclusion/exclusion configuration to skip expensive operations
+* **Use categories** - Group related properties for easier filtering
+* **Cache introspection results** when comparing many instances of the same type
+
+### Error Handling
+
+* **Handle circular references** - The library detects them but you should understand how they affect your use case
+* **Validate input objects** when necessary for your business logic
+* **Use try-catch blocks** when working with accessors that might throw exceptions in your specific domain
+
+### Testing
+
+* **Test with real objects** - Don't just test with simple data structures
+* **Test edge cases** - Empty collections, null values, circular references
+* **Test performance** with large object graphs
+* **Verify thread safety** if using in concurrent environments
+
+### Configuration
+
+* **Start simple** - Use default configuration first
+* **Configure incrementally** - Add configuration only when needed
+* **Document custom introspectors** - Make it clear why they're needed
+* **Use categories wisely** - Don't over-categorize
+
+### Security
+
+* **Sanitize diff output** - Be careful about exposing sensitive data in diffs
+* **Validate permissions** before applying merges
+* **Audit merge operations** - Log who changed what and when
+* **Limit comparison depth** for untrusted input
+
+## Common Patterns
+
+### Audit Logging
+
+```java
+diff.visit(new DiffNode.Visitor() {
+    public void node(DiffNode node, Visit visit) {
+        if (node.hasChanges() && !node.hasChildren()) {
+            Object oldValue = node.canonicalGet(base);
+            Object newValue = node.canonicalGet(working);
+            auditLog.info("Property {} changed from {} to {}", 
+                node.getPath(), oldValue, newValue);
+        }
+    }
+});
+```
+
+### Change Detection
+
+```java
+boolean hasSpecificChange = diff.visit(new DiffNode.Visitor() {
+    private boolean found = false;
+    
+    public void node(DiffNode node, Visit visit) {
+        if (node.matches(NodePath.with("specificProperty"))) {
+            if (node.getState() == DiffNode.State.CHANGED) {
+                found = true;
+                visit.stop();
+            }
+        }
+    }
+    
+    public boolean wasFound() { return found; }
+});
+```
+
+### Conditional Merge
+
+```java
+diff.visit(new DiffNode.Visitor() {
+    public void node(DiffNode node, Visit visit) {
+        if (node.hasChanges() && !node.hasChildren()) {
+            if (shouldMerge(node)) {
+                node.canonicalSet(target, node.canonicalGet(source));
+            }
+        }
+    }
+    
+    private boolean shouldMerge(DiffNode node) {
+        // Your business logic here
+        return !node.getCategories().contains("readonly");
+    }
+});
+```
+
 # Conclusion
 
 Hopefully this brief overview over the most important classes and concepts of java-object-diff helps you getting the best out of this library. If you think something important is missing or if anything isn't as well explained as you'd hoped, please let me know!

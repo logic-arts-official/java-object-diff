@@ -1,6 +1,29 @@
 # Getting Started
 
-_java-object-diff_ provides a very simple API and tries to make everything as self-explanatory as possible. It can handle a wide variety of object structures without the need for any configuration. However, in more complex scenarios it is flexible enough to let you tailor it to your needs.
+`java-object-diff` provides a very simple API and tries to make everything as self-explanatory as possible. It can handle a wide variety of object structures without the need for any configuration. However, in more complex scenarios it is flexible enough to let you tailor it to your needs.
+
+## Prerequisites
+
+* Java 8 or higher
+* SLF4J logging framework (only runtime dependency)
+
+## Installation
+
+Add java-object-diff to your project:
+
+**Maven:**
+```xml
+<dependency>
+    <groupId>de.danielbechler</groupId>
+    <artifactId>java-object-diff</artifactId>
+    <version>0.96</version>
+</dependency>
+```
+
+**Gradle:**
+```groovy
+implementation 'de.danielbechler:java-object-diff:0.96'
+```
 
 ## Creating a Diff
 
