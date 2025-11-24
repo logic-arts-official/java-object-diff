@@ -1,34 +1,23 @@
-buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.2.0'
-		classpath "com.smokejumperit.gradle.license:Gradle-License-Report:0.0.2"
-	}
-}
-
 plugins {
 	id 'java'
 	id 'groovy'
-	id 'osgi'
-	id 'net.saliman.cobertura' version '2.4.0'
-	id 'com.github.kt3k.coveralls' version '2.8.1'
-	id 'com.github.ben-manes.versions' version '0.14.0'
-	id 'com.jfrog.bintray' version '1.7.3'
-	id 'net.researchgate.release' version '2.5.0'
-	id 'com.github.jk1.dependency-license-report' version '0.3.8'
+	id 'java-library'
+	id 'jacoco'
+	id 'com.github.ben-manes.versions' version '0.50.0'
+	id 'net.researchgate.release' version '3.0.2'
+	id 'com.github.jk1.dependency-license-report' version '2.5'
+	id 'ru.vyarus.animalsniffer' version '1.7.1'
 }
 
-apply plugin: 'ru.vyarus.animalsniffer'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 group = 'de.danielbechler'
 
 description = """Java Object Diff"""
 
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
@@ -36,6 +25,7 @@ tasks.withType(JavaCompile) {
 
 repositories {
 	mavenCentral()
+	maven { url "https://repo.spring.io/plugins-release" }
 }
 
 sourceSets {
@@ -57,20 +47,21 @@ sourceSets {
 	}
 	intTest {
 		groovy {
-			compileClasspath += main.output + test.output
-			runtimeClasspath += main.output + test.output
 			srcDirs = ['src/integration-test/java']
 		}
 	}
 }
 
 configurations {
-	intTestCompile.extendsFrom testCompile
-	intTestRuntime.extendsFrom testRuntime
+	intTestImplementation.extendsFrom testImplementation
+	intTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
+sourceSets.intTest.compileClasspath += sourceSets.main.output + sourceSets.test.output
+sourceSets.intTest.runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+
 task intTest(type: Test) {
-	testClassesDir = sourceSets.intTest.output.classesDir
+	testClassesDirs = sourceSets.intTest.output.classesDirs
 	classpath = sourceSets.intTest.runtimeClasspath
 }
 
@@ -83,57 +74,40 @@ compileGroovy {
 
 jar {
 	manifest {
-		instruction 'Bundle-Vendor', 'Daniel Bechler'
-		instruction 'Bundle-DocURL', 'https://github.com/SQiShER/java-object-diff'
-		instruction 'Export-Package', '{local-packages}'
+		attributes(
+			'Bundle-Vendor': 'Daniel Bechler',
+			'Bundle-DocURL': 'https://github.com/logic-arts-official/java-object-diff',
+			'Bundle-Name': 'java-object-diff',
+			'Bundle-SymbolicName': 'de.danielbechler.diff',
+			'Bundle-Version': project.version,
+			'Export-Package': 'de.danielbechler.diff.*',
+			'Implementation-Title': 'Java Object Diff',
+			'Implementation-Version': project.version
+		)
 	}
 }
 
 dependencies {
-	signature 'org.codehaus.mojo.signature:java15:1.0@signature'
-	signature 'org.codehaus.mojo.signature:java16:1.1@signature'
-	signature 'org.codehaus.mojo.signature:java17:1.0@signature'
+	signature 'org.codehaus.mojo.signature:java18:1.0@signature'
 	// For Android support:
 	// signature 'net.sf.androidscents.signature:android-api-level-23:6.0_r3@signature'
-	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
-	testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.8'
-	testCompile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.1'
-	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.1'
-	testCompile group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4'
-	testCompile group: 'cglib', name: 'cglib-nodep', version: '3.2.4'
-	testCompile group: 'org.objenesis', name: 'objenesis', version: '2.5.1'
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.9'
+	testImplementation group: 'org.apache.groovy', name: 'groovy-all', version: '4.0.15', ext: 'pom'
+	testImplementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.11'
+	testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.11'
+	testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.3-groovy-4.0'
+	testImplementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.14.9'
+	testImplementation group: 'org.objenesis', name: 'objenesis', version: '3.3'
 }
 
-cobertura {
-	coverageFormats = ['html', 'xml']
-	coverageIgnoreTrivial = true
+jacoco {
+	toolVersion = "0.8.11"
 }
 
-bintray {
-	user = System.getenv('BINTRAY_USER')
-	key = System.getenv('BINTRAY_KEY')
-	publications = ['mavenJava']
-	publish = true
-	pkg {
-		repo = 'maven'
-		name = 'java-object-diff'
-		licenses = ['Apache-2.0']
-		vcsUrl = 'https://github.com/SQiShER/java-object-diff.git'
-		githubRepo = 'SQiShER/java-object-diff'
-		githubReleaseNotesFile = 'README.md'
-		version {
-			name = project.version
-			released = new Date()
-			vcsTag = rootProject.name + '-' + project.version
-			gpg {
-				sign = true
-				passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
-			}
-			mavenCentralSync {
-				user = System.getenv('MAVEN_CENTRAL_USER_TOKEN_KEY')
-				password = System.getenv('MAVEN_CENTRAL_USER_TOKEN_PASSWORD')
-			}
-		}
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
 	}
 }
 
@@ -142,12 +116,12 @@ javadoc {
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
+	archiveClassifier = 'sources'
 	from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	classifier = 'javadoc'
+	archiveClassifier = 'javadoc'
 	from javadoc.destinationDir
 }
 
@@ -171,7 +145,7 @@ def pomConfig = {
 		}
 	}
 	scm {
-		url "https://github.com/SQiShER/java-object-diff"
+		url "https://github.com/logic-arts-official/java-object-diff"
 	}
 }
 
@@ -185,10 +159,31 @@ publishing {
 				def root = asNode()
 				root.appendNode('description', 'Library to diff and merge Java objects with ease')
 				root.appendNode('name', 'java-object-diff')
-				root.appendNode('url', 'https://github.com/SQiShER/java-object-diff')
+				root.appendNode('url', 'https://github.com/logic-arts-official/java-object-diff')
 				root.children().last() + pomConfig
 			}
 		}
+	}
+	repositories {
+		maven {
+			name = "OSSRH"
+			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username = System.getenv("MAVEN_USERNAME") ?: project.findProperty("ossrhUsername")
+				password = System.getenv("MAVEN_PASSWORD") ?: project.findProperty("ossrhPassword")
+			}
+		}
+	}
+}
+
+signing {
+	def signingKey = System.getenv("GPG_SIGNING_KEY")
+	def signingPassword = System.getenv("GPG_SIGNING_PASSWORD")
+	if (signingKey && signingPassword) {
+		useInMemoryPgpKeys(signingKey, signingPassword)
+		sign publishing.publications.mavenJava
 	}
 }
 
@@ -214,9 +209,9 @@ task updateDocs {
 	}
 }
 
-afterReleaseBuild.dependsOn bintrayUpload
 afterReleaseBuild.dependsOn updateDocs
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '3.3'
+wrapper {
+	gradleVersion = '8.5'
+	distributionType = Wrapper.DistributionType.ALL
 }
